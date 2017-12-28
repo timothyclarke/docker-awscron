@@ -1,0 +1,2 @@
+1. This pod is there to run cronjobs for the cluster / namespace
+2. If you need access to it use the standard kubectl exec -it <pod> bash

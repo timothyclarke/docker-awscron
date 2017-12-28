@@ -1,0 +1,31 @@
+# Default values for pipdeploy.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+image:
+  repository: timothyclarke/docker-awscron
+  tag:        0.0.1
+  pullPolicy: IfNotPresent
+
+env:
+  CRONS:                'helloworld'
+  CMD_helloworld:       'hello_date.sh'
+  SCHEDULE_helloworld:  '10 * * * *'
+  AWS_DEFAULT_REGION:   "eu-west-2"
+
+secrets:
+  aws_access_key_id:      false
+  aws_secret_access_key:  false
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+nodeSelector: {}

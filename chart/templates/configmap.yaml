@@ -1,0 +1,12 @@
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    addonmanager.kubernetes.io/mode: Reconcile
+data:
+  hello_date_cm: |-
+    #!/bin/bash
+    echo hello
+    date +%F-%T >> /var/log/cron.log

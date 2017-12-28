@@ -1,0 +1,58 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+          - name: cronmap
+            mountPath: /awscron/hello_date_cm.sh
+            subPath: hello_date_cm
+          env:
+          {{- if .Values.secrets.aws_access_key_id }}
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "name" . }}-secret
+                  key: aws_access_key_id
+          {{- end }}
+          {{- if .Values.secrets.aws_secret_access_key }}
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "name" . }}-secret
+                  key: aws_secret_access_key
+          {{- end }}
+{{- range $env_name, $env_value := .Values.env }}
+{{- if not (empty $env_value) }}
+            - name: {{ $env_name | quote }}
+              value: {{ $env_value | quote }}
+{{- end }}
+{{- end }}
+{{- if .Values.resources }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+{{- end }}
+{{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+{{- end }}
+      volumes:
+        - name: cronmap
+          configMap:
+            name: {{ template "fullname" . }}
