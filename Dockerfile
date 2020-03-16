@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.11.3
 MAINTAINER Timothy Clarke <ghtimothy@timothy.fromnz.net>
 
 COPY templates/* /awscron/templates/
